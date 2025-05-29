@@ -1,6 +1,6 @@
 const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/';
 
-const shows = ["Naruto", "Bleach", "OnePiece"]; // Your folders
+const shows = ["testicle"]; // Your folders
 
 document.getElementById("search").addEventListener("input", function () {
   const input = this.value.toLowerCase();
