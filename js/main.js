@@ -2,7 +2,7 @@ const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/
 const shows = ["KissXSis"];
 
 const episodeCounts = {
-  KissXSis: 2 // Or however many you really have
+  KissXSis: 12 // Or however many you really have
 };
 
 document.getElementById("search").addEventListener("input", function () {
