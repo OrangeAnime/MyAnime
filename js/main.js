@@ -2,7 +2,7 @@ const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/
 const shows = ["testicle"];
 
 const episodeCounts = {
-  testicle: 5 // Or however many you really have
+  KissXSis: 2 // Or however many you really have
 };
 
 document.getElementById("search").addEventListener("input", function () {
