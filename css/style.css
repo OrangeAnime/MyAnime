@@ -1,27 +1,67 @@
-/* Global styles */
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
   background-color: #0d0d0d;
   color: #e0d4f7;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* Header */
+.bubbles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: radial-gradient(#330066 1px, transparent 1px),
+              radial-gradient(#6600cc 2px, transparent 2px);
+  background-position: 0 0, 50px 50px;
+  background-size: 100px 100px;
+  animation: moveBubbles 20s linear infinite;
+}
+
+@keyframes moveBubbles {
+  from {
+    background-position: 0 0, 50px 50px;
+  }
+  to {
+    background-position: 100px 100px, 150px 150px;
+  }
+}
+
 header {
-  background-color: #1a001a;
-  padding: 20px;
   text-align: center;
-  font-size: 2rem;
-  color: #cc99ff;
-  text-shadow: 0 0 10px #9900ff;
-  border-bottom: 2px solid #6600cc;
+  padding: 30px 10px 10px;
 }
 
-/* Search bar */
+.logo {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #cc99ff;
+  text-shadow: 0 0 12px #9900ff;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.logo span {
+  font-size: 1.5rem;
+  margin-left: 10px;
+  color: #ffccff;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #9900ff;
+  }
+  to {
+    text-shadow: 0 0 20px #cc99ff;
+  }
+}
+
 #search {
   display: block;
   width: 60%;
-  margin: 30px auto 10px auto;
+  margin: 20px auto;
   padding: 12px;
   font-size: 1.1rem;
   border: none;
@@ -35,7 +75,6 @@ header {
   color: #b799cc;
 }
 
-/* Suggestions */
 #suggestions {
   width: 60%;
   margin: auto;
@@ -57,7 +96,6 @@ header {
   background-color: #330066;
 }
 
-/* Show title */
 #show-title {
   text-align: center;
   margin-top: 30px;
@@ -66,14 +104,36 @@ header {
   text-shadow: 0 0 8px #9933ff;
 }
 
-/* Episode buttons */
 #episode-list {
   text-align: center;
   margin: 20px 0;
 }
 
 #episode-list button {
-  background-color: #330066;
+  background: linear-gradient(to right, #6600cc, #9900ff);
   color: #f0e6ff;
   border: none;
-  padding: 12px
+  padding: 12px 24px;
+  margin: 10px;
+  border-radius: 999px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  font-weight: bold;
+}
+
+#episode-list button:hover {
+  background-color: #6600cc;
+  transform: scale(1.05);
+}
+
+#video-player {
+  display: block;
+  width: 90%;
+  max-width: 960px;
+  margin: 30px auto;
+  border: 2px solid #6600cc;
+  border-radius: 16px;
+  box-shadow: 0 0 15px #6600cc;
+  background-color: #1a001a;
+}
