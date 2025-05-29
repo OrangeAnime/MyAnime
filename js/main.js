@@ -1,13 +1,8 @@
 const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/';
+const shows = ["testicle"];
 
-const shows = ["testicle"]; // Your folders
-
-const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/';
-
-
-// Set episode count for each folder here
 const episodeCounts = {
-  testicle: 1
+  testicle: 5 // Or however many you really have
 };
 
 document.getElementById("search").addEventListener("input", function () {
