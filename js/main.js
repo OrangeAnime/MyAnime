@@ -1,4 +1,4 @@
-const repoBaseUrl = 'https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/main/';
+const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/';
 
 const shows = ["Naruto", "Bleach", "OnePiece"]; // Your folders
 
