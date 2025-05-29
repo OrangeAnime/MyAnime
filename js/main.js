@@ -1,5 +1,5 @@
 const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/';
-const shows = ["testicle"];
+const shows = ["KissXSis"];
 
 const episodeCounts = {
   KissXSis: 2 // Or however many you really have
