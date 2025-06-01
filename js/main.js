@@ -131,16 +131,22 @@ function showWelcome() {
   showSection("welcome");
 }
 
-// Manga tab: fetch and display manga from MangaDex
+// Manga tab: fetch and display manga from MangaDex via CORS proxy
 async function showManga() {
   showSection("manga");
   const mangaSection = document.getElementById("manga-section");
   mangaSection.innerHTML = `<div style="color:#b98aff;font-size:1.4em;">Loading manga from MangaDex...</div>`;
 
-  // Fetch the most followed manga
+  // Use a public CORS proxy for development/preview (do NOT use for production)
+  const apiUrl = "https://api.mangadex.org/manga?limit=18&order[followedCount]=desc&includes[]=cover_art&availableTranslatedLanguage[]=en";
+  const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(apiUrl);
+
   try {
-    const url = "https://api.mangadex.org/manga?limit=12&order[followedCount]=desc&includes[]=cover_art&availableTranslatedLanguage[]=en";
-const resp = await fetch("https://corsproxy.io/?" + encodeURIComponent(url));
+    const resp = await fetch(proxyUrl);
+    if (!resp.ok) {
+      mangaSection.innerHTML = `<div style="color:#b98aff;font-size:1.4em;">Failed to fetch: ${resp.status}</div>`;
+      return;
+    }
     const data = await resp.json();
     if (!data.data || !data.data.length) {
       mangaSection.innerHTML = `<div style="color:#b98aff;font-size:1.4em;">No manga found.</div>`;
