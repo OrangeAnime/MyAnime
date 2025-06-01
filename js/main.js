@@ -12,7 +12,7 @@ window.addEventListener('resize', resizeCanvas);
 
 function randomColor() {
   const c = [
-    '#c18aff', '#8e24aa', '#a020f0', '#6a1b9a', '#e040fb'
+    '#c18aff', '#8e24aa', '#a020f0', '#6a1b9a', '#e040fb', "#1a002b", "#23232d"
   ];
   return c[Math.floor(Math.random() * c.length)];
 }
@@ -23,12 +23,12 @@ function createBubbles(n) {
     bubbles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      r: 32 + Math.random() * 52,
-      s: 0.5 + Math.random() * 1.4,
-      dx: (Math.random()-0.5)*0.6,
-      dy: (Math.random()*0.7 + 0.2),
+      r: 36 + Math.random() * 70,
+      s: 0.6 + Math.random() * 1.5,
+      dx: (Math.random()-0.5)*0.7,
+      dy: (Math.random()*0.9 + 0.3),
       color: randomColor(),
-      alpha: 0.15 + Math.random() * 0.18
+      alpha: 0.16 + Math.random() * 0.21
     });
   }
 }
@@ -41,13 +41,13 @@ function animateBubbles() {
     ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
     ctx.closePath();
     ctx.shadowColor = b.color;
-    ctx.shadowBlur = 30;
+    ctx.shadowBlur = 44;
     ctx.fillStyle = b.color;
     ctx.fill();
     ctx.restore();
 
     b.x += b.dx;
-    b.y -= b.s * 0.6;
+    b.y -= b.s * 0.58;
     if (b.y + b.r < 0) {
       b.y = canvas.height + b.r;
       b.x = Math.random() * canvas.width;
@@ -58,8 +58,8 @@ function animateBubbles() {
   }
   requestAnimationFrame(animateBubbles);
 }
-createBubbles(Math.floor(window.innerWidth / 120) + 16);
-window.addEventListener('resize', ()=>createBubbles(Math.floor(window.innerWidth / 120) + 16));
+createBubbles(Math.floor(window.innerWidth / 95) + 22);
+window.addEventListener('resize', ()=>createBubbles(Math.floor(window.innerWidth / 95) + 22));
 animateBubbles();
 
 // --- Core Anime site logic ---
@@ -73,7 +73,7 @@ const shows = [
     season: "Season1",
     episodes: 12
   }
-  // You can add more shows here!
+  // Add more shows here as needed
 ];
 
 let currentShow = null;
