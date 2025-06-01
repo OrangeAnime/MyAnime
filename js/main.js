@@ -64,29 +64,41 @@ animateBubbles();
 
 // --- Core Anime site logic ---
 
-const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/';
-
 const shows = [
   {
     name: "KissXSis",
-    cover: `${repoBaseUrl}KissXSis/cover.jpg`,
-    season: "Season1",
-    episodes: 12
+    cover: "https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/KissXSis/cover.jpg",
+    seasons: [
+      { name: "Season1", episodes: 12 }
+    ]
   }
   // Add more shows here as needed
 ];
 
 let currentShow = null;
+let currentSeasonIdx = 0;
 
-function loadHomePage() {
-  // Reset UI
-  document.getElementById("home").style.display = "flex";
+// Utility to show/hide sections
+function showSection(section) {
+  document.getElementById("welcome-message").style.display = section === "welcome" ? "block" : "none";
+  document.getElementById("home").style.display = section === "shows" ? "flex" : "none";
+  document.getElementById("search").style.display = section === "shows" ? "block" : "none";
+  document.getElementById("manga-section").style.display = section === "manga" ? "flex" : "none";
   document.getElementById("player-container").style.display = "none";
+  // Set active nav
+  document.getElementById("nav-home").classList.toggle("active", section === "welcome");
+  document.getElementById("nav-shows").classList.toggle("active", section === "shows");
+  document.getElementById("nav-manga").classList.toggle("active", section === "manga");
+}
+
+// Shows grid
+function loadHomePage() {
+  showSection("shows");
   document.getElementById("suggestions").style.display = "none";
   document.getElementById("search").value = "";
 
   const home = document.getElementById("home");
-  home.innerHTML = ""; // Clear any previous shows
+  home.innerHTML = "";
 
   shows.forEach(show => {
     const showCard = document.createElement("div");
@@ -99,38 +111,73 @@ function loadHomePage() {
     const title = document.createElement("h3");
     title.textContent = show.name;
 
+    const totalEpisodes = show.seasons.reduce((a, s) => a + s.episodes, 0);
     const info = document.createElement("p");
-    info.textContent = `${show.season} – ${show.episodes} Episodes`;
+    info.textContent = show.seasons.length > 1
+      ? `${show.seasons.length} Seasons – ${totalEpisodes} Episodes`
+      : `${show.seasons[0].name} – ${show.seasons[0].episodes} Episodes`;
 
     showCard.appendChild(img);
     showCard.appendChild(title);
     showCard.appendChild(info);
-    showCard.onclick = () => loadPlayer(show);
+    showCard.onclick = () => loadPlayer(show, 0);
 
     home.appendChild(showCard);
   });
 }
 
-function loadPlayer(show) {
+// Home (welcome) tab
+function showWelcome() {
+  showSection("welcome");
+}
+
+// Manga tab
+function showManga() {
+  showSection("manga");
+}
+
+// Player with seasons
+function loadPlayer(show, seasonIdx = 0) {
   currentShow = show;
+  currentSeasonIdx = seasonIdx;
+
   document.getElementById("player-container").style.display = "block";
   document.getElementById("home").style.display = "none";
+  document.getElementById("welcome-message").style.display = "none";
+  document.getElementById("manga-section").style.display = "none";
   document.getElementById("suggestions").style.display = "none";
+  document.getElementById("search").style.display = "none";
 
   const title = document.getElementById("show-title");
   const episodeList = document.getElementById("episode-list");
   const video = document.getElementById("video-player");
-  title.textContent = `${show.name} – ${show.season}`;
+  const seasonList = document.getElementById("season-list");
+
+  // Always show the season select button(s)
+  seasonList.innerHTML = "";
+  show.seasons.forEach((season, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "season-btn" + (idx === currentSeasonIdx ? " active" : "");
+    btn.textContent = season.name.replace(/([a-zA-Z])(\d)/, "$1 $2"); // "Season1" -> "Season 1"
+    btn.onclick = () => {
+      if (currentSeasonIdx !== idx) {
+        loadPlayer(show, idx);
+      }
+    };
+    seasonList.appendChild(btn);
+  });
+
+  const currentSeason = show.seasons[currentSeasonIdx];
+  title.textContent = `${show.name} – ${currentSeason.name.replace(/([a-zA-Z])(\d)/, "$1 $2")}`;
   episodeList.innerHTML = "";
 
-  // Display episode buttons
-  for (let i = 1; i <= show.episodes; i++) {
+  for (let i = 1; i <= currentSeason.episodes; i++) {
     const btn = document.createElement("button");
     btn.textContent = `Episode ${i}`;
     btn.onclick = () => {
       Array.from(episodeList.children).forEach(b=>b.classList.remove("active"));
       btn.classList.add("active");
-      video.src = `${repoBaseUrl}${show.name}/${show.season}/Episode${i}.mp4`;
+      video.src = `https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/${show.name}/${currentSeason.name}/Episode${i}.mp4`;
       video.load();
       video.play();
     };
@@ -140,10 +187,12 @@ function loadPlayer(show) {
   episodeList.firstChild && episodeList.firstChild.click();
 }
 
-// --- Nav Home ---
-document.getElementById("nav-home").onclick = loadHomePage;
+// --- Nav ---
+document.getElementById("nav-home").onclick = showWelcome;
+document.getElementById("nav-shows").onclick = loadHomePage;
+document.getElementById("nav-manga").onclick = showManga;
 
-// --- Search (stubbed for now) ---
+// --- Search logic ---
 const searchInput = document.getElementById("search");
 const suggestions = document.getElementById("suggestions");
 searchInput.oninput = function() {
@@ -152,7 +201,7 @@ searchInput.oninput = function() {
     suggestions.style.display = "none";
     return;
   }
-  // For now, just filter shows by name.
+  // Filter shows by name.
   let filtered = shows.filter(show =>
     show.name.toLowerCase().includes(q)
   );
@@ -162,16 +211,15 @@ searchInput.oninput = function() {
     li.textContent = show.name;
     li.onclick = () => {
       suggestions.style.display = "none";
-      loadPlayer(show);
+      loadPlayer(show, 0);
     };
     suggestions.appendChild(li);
   });
   suggestions.style.display = filtered.length ? "block" : "none";
 };
-// Hide suggestions on blur
 searchInput.onblur = () => setTimeout(()=>suggestions.style.display="none", 150);
 searchInput.onfocus = () => {
   if (suggestions.children.length) suggestions.style.display = "block";
 };
 
-window.onload = loadHomePage;
+window.onload = showWelcome;
