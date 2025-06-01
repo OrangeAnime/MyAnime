@@ -139,7 +139,8 @@ async function showManga() {
 
   // Fetch the most followed manga
   try {
-    const resp = await fetch("https://api.mangadex.org/manga?limit=18&order[followedCount]=desc&includes[]=cover_art&availableTranslatedLanguage[]=en");
+    const url = "https://api.mangadex.org/manga?limit=12&order[followedCount]=desc&includes[]=cover_art&availableTranslatedLanguage[]=en";
+const resp = await fetch("https://corsproxy.io/?" + encodeURIComponent(url));
     const data = await resp.json();
     if (!data.data || !data.data.length) {
       mangaSection.innerHTML = `<div style="color:#b98aff;font-size:1.4em;">No manga found.</div>`;
