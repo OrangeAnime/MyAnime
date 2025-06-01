@@ -1,5 +1,13 @@
 const repoBaseUrl = 'https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/';
-const shows = ["KissXSis"];
+const shows = [
+  {
+    name: "KissXSis",
+    cover: `${repoBaseUrl}KissXSis/cover.jpg`,
+    seasons: {
+      Season1: 12
+    }
+  }
+];
 
 const episodeCounts = {
   KissXSis: {
