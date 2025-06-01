@@ -1,149 +1,36 @@
 body {
   margin: 0;
+  background: linear-gradient(145deg, #0d001a, #1a002b);
+  color: #fff;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #0d0d0d;
-  color: #e0d4f7;
-  position: relative;
-  overflow-x: hidden;
 }
 
-.bubbles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background: radial-gradient(#330066 1px, transparent 1px),
-              radial-gradient(#6600cc 2px, transparent 2px);
-  background-position: 0 0, 50px 50px;
-  background-size: 100px 100px;
-  animation: moveBubbles 20s linear infinite;
-}
-
-@keyframes moveBubbles {
-  from {
-    background-position: 0 0, 50px 50px;
-  }
-  to {
-    background-position: 100px 100px, 150px 150px;
-  }
-}
-
-header {
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
   text-align: center;
-  padding: 30px 10px 10px;
 }
 
 .logo {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #cc99ff;
-  text-shadow: 0 0 12px #9900ff;
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-.logo span {
-  font-size: 1.5rem;
-  margin-left: 10px;
-  color: #ffccff;
-}
-
-@keyframes glow {
-  from {
-    text-shadow: 0 0 10px #9900ff;
-  }
-  to {
-    text-shadow: 0 0 20px #cc99ff;
-  }
-}
-
-#search {
-  display: block;
-  width: 60%;
-  margin: 20px auto;
-  padding: 12px;
-  font-size: 1.1rem;
-  border: none;
-  border-radius: 8px;
-  background-color: #1e1e2f;
-  color: #f5e6ff;
-  box-shadow: 0 0 5px #6600cc;
-}
-
-#search::placeholder {
-  color: #b799cc;
-}
-
-#suggestions {
-  width: 60%;
-  margin: auto;
-  list-style: none;
-  padding: 0;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-#season-list {
-  text-align: center;
-  margin: 20px 0;
-}
-
-#season-list button {
-  background: linear-gradient(to right, #440077, #9900ff);
-  color: #f0e6ff;
-  border: none;
-  padding: 10px 22px;
-  margin: 8px;
-  border-radius: 999px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-  font-weight: bold;
-}
-
-#season-list button:hover {
-  background-color: #7700cc;
-  transform: scale(1.05);
-}
-
-#suggestions li {
-  background-color: #1a001a;
-  padding: 12px;
-  border-bottom: 1px solid #330066;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-#suggestions li:hover {
-  background-color: #330066;
-}
-
-#show-title {
-  text-align: center;
-  margin-top: 30px;
-  font-size: 1.8rem;
-  color: #d3bfff;
-  text-shadow: 0 0 8px #9933ff;
+  font-size: 3rem;
+  color: #c18aff;
+  margin-bottom: 30px;
 }
 
 #home {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 30px;
-  padding: 30px 0;
 }
 
 .show-card {
-  background-color: #1a001a;
+  background: #220033;
   border-radius: 20px;
-  overflow: hidden;
-  width: 200px;
-  box-shadow: 0 0 15px #6600cc;
-  transition: transform 0.3s;
+  box-shadow: 0 0 20px rgba(136, 51, 255, 0.5);
+  padding: 10px;
+  width: 220px;
   cursor: pointer;
-  text-align: center;
+  transition: transform 0.3s;
 }
 
 .show-card:hover {
@@ -152,53 +39,45 @@ header {
 
 .show-card img {
   width: 100%;
-  height: auto;
-  display: block;
-  border-bottom: 1px solid #330066;
+  border-radius: 12px;
 }
 
 .show-card h3 {
+  color: #e6ccff;
   margin: 10px 0 5px;
-  color: #d9b3ff;
 }
 
 .show-card p {
-  margin-bottom: 10px;
-  color: #bfa6e0;
-  font-size: 0.9rem;
+  color: #b98aff;
 }
 
+#player-container {
+  margin-top: 30px;
+}
+
+video {
+  width: 90%;
+  max-width: 720px;
+  margin-top: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 10px #5500aa;
+}
 
 #episode-list {
-  text-align: center;
-  margin: 20px 0;
+  margin-top: 15px;
 }
 
 #episode-list button {
-  background: linear-gradient(to right, #6600cc, #9900ff);
-  color: #f0e6ff;
+  margin: 5px;
+  padding: 8px 14px;
   border: none;
-  padding: 12px 24px;
-  margin: 10px;
-  border-radius: 999px;
-  font-size: 1rem;
+  border-radius: 10px;
+  background: #6a1b9a;
+  color: #fff;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-  font-weight: bold;
+  transition: background 0.3s;
 }
 
 #episode-list button:hover {
-  background-color: #6600cc;
-  transform: scale(1.05);
-}
-
-#video-player {
-  display: block;
-  width: 90%;
-  max-width: 960px;
-  margin: 30px auto;
-  border: 2px solid #6600cc;
-  border-radius: 16px;
-  box-shadow: 0 0 15px #6600cc;
-  background-color: #1a001a;
+  background: #8e24aa;
 }
