@@ -177,6 +177,63 @@ nav {
   word-break: break-word;
 }
 
+/* Shows Tab (Home Anime Grid) */
+#home {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 36px;
+  min-height: 200px;
+  margin-bottom: 30px;
+}
+
+.show-card {
+  background: linear-gradient(120deg, #220046 20%, #a020f099 100%);
+  border-radius: 22px;
+  box-shadow: 0 0 50px #a020f077, 0 2px 16px #2a0050cc;
+  padding: 18px 18px 13px 18px;
+  width: 220px;
+  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(.5,2,.5,1), box-shadow 0.2s;
+  border: 2px solid #ad47f250;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.show-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  pointer-events: none;
+  background: radial-gradient(circle at 70% 30%, #be7bff22 0%, #0000 80%);
+}
+.show-card:hover {
+  transform: scale(1.045) translateY(-6px);
+  box-shadow: 0 0 90px #b671ff88, 0 8px 30px #57009e77;
+}
+.show-card img {
+  width: 100%;
+  border-radius: 13px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 20px #ad47f244, 0 2px 8px #2a005022;
+}
+.show-card h3 {
+  color: #e6ccff;
+  margin: 0 0 7px 0;
+  font-size: 1.25em;
+  text-shadow: 0 0 7px #c18aff99;
+}
+.show-card p {
+  color: #b98aff;
+  font-size: 1em;
+  margin: 0;
+  font-weight: 600;
+}
+
 /* Manga Reader */
 #manga-reader {
   display: flex;
@@ -367,6 +424,10 @@ input[type="submit"]:hover,
     flex-direction: column;
     align-items: center;
     gap: 18px;
+  }
+  .show-card {
+    width: 90vw;
+    max-width: 350px;
   }
   .logo-area {
     flex-direction: column;
