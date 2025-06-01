@@ -114,6 +114,7 @@ nav {
   margin: 40px 0;
   min-height: 180px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
