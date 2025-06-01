@@ -1,0 +1,393 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', 'Montserrat', Arial, sans-serif;
+  color: #fff;
+  background: transparent;
+  overflow-x: hidden;
+}
+
+#bg-bubbles {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, #100015 0%, #37005e 100%);
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 1600px;
+  margin: 20px auto 0 auto;
+  padding: 20px 36px 32px 36px;
+  background: rgba(22, 0, 32, 0.64);
+  box-shadow: 0 8px 40px 10px #a020f055;
+  border-radius: 22px;
+  backdrop-filter: blur(8px);
+  text-align: center;
+  border: 2.5px solid #b671ff45;
+}
+
+header {
+  margin-bottom: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.site-logo {
+  height: 110px;
+  width: 110px;
+  min-width: 110px;
+  min-height: 110px;
+  border-radius: 24px;
+  box-shadow: 0 0 32px #a020f088, 0 2px 8px #2a005022;
+  object-fit: contain;
+  background: #200032;
+  border: 2px solid #a020f066;
+  transition: box-shadow 0.18s;
+  margin-right: 16px;
+}
+.site-logo:hover {
+  box-shadow: 0 0 60px #c18affcc, 0 6px 28px #57009e77;
+}
+
+.logo {
+  font-size: 3.8rem;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #c18aff;
+  text-shadow:
+    0 0 10px #c18affbb,
+    0 0 40px #9b23ea66,
+    0 0 80px #a020f033;
+  margin: 0;
+  text-align: left;
+}
+
+nav {
+  margin-top: 15px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+#nav-home, #nav-shows, #nav-manga {
+  background: linear-gradient(90deg, #7c28fa 0%, #a020f0 100%);
+  color: #fff;
+  border: none;
+  border-radius: 32px;
+  font-size: 1.25em;
+  padding: 12px 36px;
+  box-shadow: 0 3px 18px #a020f099;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 8px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+#nav-home.active, #nav-shows.active, #nav-manga.active,
+#nav-home:hover, #nav-shows:hover, #nav-manga:hover {
+  background: linear-gradient(90deg, #a020f0 0%, #e040fb 100%);
+  color: #fff;
+  box-shadow: 0 6px 32px #c18aff55;
+}
+
+#welcome-message {
+  font-size: 2rem;
+  color: #e6ccff;
+  margin: 40px 0 40px 0;
+  text-shadow: 0 0 14px #c18aff99;
+  display: block;
+}
+
+#manga-section {
+  margin: 40px 0;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#manga-search-bar {
+  display: block;
+  margin: 0 auto 32px auto;
+  padding: 15px 24px;
+  width: 65vw;
+  max-width: 450px;
+  border-radius: 20px;
+  border: 3px solid #23232d;
+  background: #23232d;
+  color: #fff;
+  font-size: 1.1rem;
+  font-family: 'Segoe UI','Montserrat',Arial,sans-serif;
+  font-weight: 600;
+  box-shadow: 0 2px 16px #a020f030;
+  outline: none;
+  text-align: center;
+  transition: border 0.2s, background 0.2s;
+}
+#manga-search-bar:focus {
+  border: 3px solid #a020f0;
+  background: #1b1b24;
+}
+.manga-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+  margin: 30px auto;
+}
+.manga-card {
+  background: linear-gradient(120deg,#220046 20%,#a020f099 100%);
+  border-radius: 22px;
+  box-shadow: 0 0 50px #a020f077,0 2px 16px #2a0050cc;
+  padding: 18px 18px 13px 18px;
+  width: 220px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.22s cubic-bezier(.5,2,.5,1), box-shadow 0.2s;
+  border: 2px solid #ad47f250;
+  position: relative;
+  overflow: hidden;
+  min-height: 80px;
+}
+.manga-card:hover {
+  transform: scale(1.045) translateY(-6px);
+  box-shadow: 0 0 90px #b671ff88, 0 8px 30px #57009e77;
+}
+.manga-card h3 {
+  color: #e6ccff;
+  margin: 0 0 7px 0;
+  font-size: 1.25em;
+  text-shadow: 0 0 7px #c18aff99;
+  text-align: center;
+  word-break: break-word;
+}
+
+/* Manga Reader */
+#manga-reader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px auto;
+  max-width: 900px;
+  min-height: 80vh;
+  background: rgba(32,0,50,0.72);
+  border-radius: 18px;
+  box-shadow: 0 0 34px #b671ff55;
+  padding: 24px 14px 30px 14px;
+  border: 2px solid #b671ff50;
+  animation: fadeIn 0.7s;
+}
+#reader-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 14px;
+}
+#reader-title {
+  font-size: 1.3em;
+  color: #e6ccff;
+  font-weight: 700;
+  flex: 1 1 auto;
+  text-align: center;
+}
+#reader-chapter-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#reader-chapter-controls button {
+  padding: 6px 18px;
+  font-size: 1.1em;
+}
+#reader-chapter-num {
+  color: #b98aff;
+  font-weight: 700;
+  font-size: 1.15em;
+}
+#reader-pages {
+  margin-top: 16px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.reader-page-img {
+  width: 98%;
+  max-width: 850px;
+  border-radius: 12px;
+  box-shadow: 0 0 24px #b671ff44, 0 2px 12px #2a005022;
+  background: #170028;
+  margin-bottom: 8px;
+  object-fit: contain;
+}
+
+#reader-back-btn {
+  padding: 8px 18px;
+  font-size: 1.1em;
+  background: linear-gradient(90deg, #7c28fa 0%, #a020f0 100%);
+  color: #fff;
+  border: none;
+  border-radius: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 12px #a020f088;
+  margin-right: 12px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+#reader-back-btn:hover {
+  background: linear-gradient(90deg, #c18aff 0%, #a020f0 100%);
+  color: #fff;
+  box-shadow: 0 4px 18px #c18aff55;
+}
+
+#player-container {
+  margin-top: 26px;
+  animation: fadeIn 0.7s;
+  background: rgba(32,0,50,0.72);
+  border-radius: 18px;
+  box-shadow: 0 0 34px #b671ff55;
+  padding: 24px 14px 14px 14px;
+  border: 2px solid #b671ff50;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#show-title {
+  font-size: 1.7em;
+  color: #e6ccff;
+  text-shadow: 0 0 14px #c18aff99;
+  margin: 0 0 22px 0;
+}
+
+#season-list {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.season-btn {
+  padding: 11px 32px;
+  border: none;
+  border-radius: 22px;
+  background: linear-gradient(90deg, #7c28fa 0%, #a020f0 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 0 2px 14px #a020f099;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.season-btn.active, .season-btn:hover {
+  background: linear-gradient(90deg, #c18aff 0%, #a020f0 100%);
+  color: #fff;
+  box-shadow: 0 4px 18px #c18aff55;
+}
+
+video {
+  width: 97%;
+  max-width: 630px;
+  margin-top: 14px;
+  border-radius: 15px;
+  box-shadow: 0 0 24px #b671ff33, 0 2px 12px #2a005022;
+  border: 2px solid #b671ff55;
+  background: #000;
+}
+
+#episode-list {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+#episode-list button,
+#player-container button,
+button,
+input[type="button"],
+input[type="submit"] {
+  padding: 13px 28px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(90deg, #a020f0 0%, #e040fb 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05em;
+  cursor: pointer;
+  box-shadow: 0 3px 18px #a020f099;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  outline: none;
+  margin: 0;
+}
+#episode-list button:hover,
+#player-container button:hover,
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+#episode-list button.active {
+  background: linear-gradient(90deg, #c18aff 0%, #a020f0 100%);
+  color: #fff;
+  box-shadow: 0 6px 32px #c18aff55;
+}
+
+@media (max-width: 1100px) {
+  .container {
+    max-width: 98vw;
+    padding: 8px 2vw;
+    border-radius: 0;
+    box-shadow: none;
+    margin-top: 0;
+  }
+  #player-container,
+  #manga-reader {
+    padding: 10px 2vw;
+  }
+  #home {
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .logo-area {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .site-logo {
+    height: 62px;
+    width: 62px;
+    min-width: 62px;
+    min-height: 62px;
+    border-radius: 13px;
+    margin-right: 0;
+  }
+  .logo {
+    font-size: 2.1rem;
+    text-align: center;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(40px);}
+  to { opacity: 1; transform: translateY(0);}
+}
