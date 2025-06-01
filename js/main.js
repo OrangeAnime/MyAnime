@@ -29,15 +29,21 @@ document.getElementById("search").addEventListener("input", function () {
 });
 
 function loadShow(showName) {
-  document.getElementById("show-title").innerText = showName;
+  const show = shows.find(s => s.name === showName);
+  if (!show) return;
+
+  document.getElementById("home").style.display = "none";
+  document.getElementById("player-container").style.display = "block";
+
+  document.getElementById("show-title").innerText = show.name;
   const seasonList = document.getElementById("season-list");
   seasonList.innerHTML = "";
 
-  const seasons = Object.keys(episodeCounts[showName] || {});
+  const seasons = Object.keys(show.seasons || {});
   seasons.forEach(season => {
     const seasonBtn = document.createElement("button");
     seasonBtn.textContent = season;
-    seasonBtn.onclick = () => loadSeason(showName, season);
+    seasonBtn.onclick = () => loadSeason(show.name, season);
     seasonList.appendChild(seasonBtn);
   });
 
@@ -45,6 +51,7 @@ function loadShow(showName) {
   document.getElementById("video-player").src = "";
   document.getElementById("suggestions").innerHTML = "";
 }
+
 
 function loadSeason(showName, seasonName) {
   const episodeList = document.getElementById("episode-list");
@@ -64,3 +71,35 @@ function loadSeason(showName, seasonName) {
     episodeList.appendChild(episodeButton);
   }
 }
+
+function loadHomePage() {
+  const home = document.getElementById("home");
+  home.innerHTML = ""; // Clear previous
+
+  shows.forEach(show => {
+    const showCard = document.createElement("div");
+    showCard.className = "show-card";
+
+    const img = document.createElement("img");
+    img.src = show.cover;
+    img.alt = show.name;
+
+    const title = document.createElement("h3");
+    title.textContent = show.name;
+
+    const episodeCount = Object.values(show.seasons).reduce((a, b) => a + b, 0);
+    const epInfo = document.createElement("p");
+    epInfo.textContent = `${Object.keys(show.seasons).length} season(s), ${episodeCount} episode(s)`;
+
+    showCard.appendChild(img);
+    showCard.appendChild(title);
+    showCard.appendChild(epInfo);
+
+    showCard.onclick = () => loadShow(show.name);
+
+    home.appendChild(showCard);
+  });
+}
+
+window.onload = loadHomePage;
+
