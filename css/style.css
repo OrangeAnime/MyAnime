@@ -84,6 +84,29 @@ header {
   overflow: hidden;
 }
 
+#season-list {
+  text-align: center;
+  margin: 20px 0;
+}
+
+#season-list button {
+  background: linear-gradient(to right, #440077, #9900ff);
+  color: #f0e6ff;
+  border: none;
+  padding: 10px 22px;
+  margin: 8px;
+  border-radius: 999px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  font-weight: bold;
+}
+
+#season-list button:hover {
+  background-color: #7700cc;
+  transform: scale(1.05);
+}
+
 #suggestions li {
   background-color: #1a001a;
   padding: 12px;
