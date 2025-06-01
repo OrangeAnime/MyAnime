@@ -81,6 +81,7 @@ function showSection(section) {
   document.getElementById("home").style.display = section === "shows" ? "flex" : "none";
   document.getElementById("search").style.display = section === "shows" ? "block" : "none";
   document.getElementById("manga-section").style.display = section === "manga" ? "flex" : "none";
+  document.getElementById("manga-reader").style.display = "none";
   document.getElementById("player-container").style.display = "none";
   document.getElementById("nav-home").classList.toggle("active", section === "welcome");
   document.getElementById("nav-shows").classList.toggle("active", section === "shows");
@@ -133,6 +134,7 @@ function loadPlayer(show, seasonIdx = 0) {
   document.getElementById("home").style.display = "none";
   document.getElementById("welcome-message").style.display = "none";
   document.getElementById("manga-section").style.display = "none";
+  document.getElementById("manga-reader").style.display = "none";
   document.getElementById("suggestions").style.display = "none";
   document.getElementById("search").style.display = "none";
 
@@ -164,7 +166,7 @@ function loadPlayer(show, seasonIdx = 0) {
     btn.onclick = () => {
       Array.from(episodeList.children).forEach(b=>b.classList.remove("active"));
       btn.classList.add("active");
-      video.src = `https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/${show.name}/${currentSeason.name}/Episode${i}.mp4`;
+      video.src = `https://raw.githubusercontent.com/OrangeAnime/MyAnime/main/KissXSis/Season1/Episode${i}.mp4`;
       video.load();
       video.play();
     };
@@ -173,7 +175,7 @@ function loadPlayer(show, seasonIdx = 0) {
   episodeList.firstChild && episodeList.firstChild.click();
 }
 
-// --- Manga Title Only (no covers) ---
+// --- Manga Section with Reader ---
 function renderMangaSearchBar(onSearch) {
   let searchBar = document.getElementById("manga-search-bar");
   if (!searchBar) {
@@ -208,6 +210,38 @@ async function fetchManga(query) {
   return await resp.json();
 }
 
+async function fetchChapters(mangaId) {
+  const chapters = [];
+  let offset = 0;
+  let hasMore = true;
+  while (hasMore && chapters.length < 100) { // Only load first 100 chapters for perf
+    const url = `https://api.mangadex.org/chapter?manga=${mangaId}&translatedLanguage[]=en&order[chapter]=asc&limit=40&offset=${offset}`;
+    const resp = await fetch("https://corsproxy.io/?" + encodeURIComponent(url));
+    if (!resp.ok) break;
+    const data = await resp.json();
+    if (data.data && data.data.length) {
+      chapters.push(...data.data);
+      offset += data.data.length;
+      hasMore = data.total ? chapters.length < data.total : false;
+    } else {
+      break;
+    }
+  }
+  // Filter out chapters with no readable chapter number
+  return chapters.filter(chap => chap.attributes.chapter);
+}
+
+async function fetchChapterPages(chapterId) {
+  // Get atapi info
+  const resp = await fetch("https://corsproxy.io/?" + encodeURIComponent(`https://api.mangadex.org/at-home/server/${chapterId}`));
+  if (!resp.ok) throw new Error("Failed to fetch pages.");
+  const data = await resp.json();
+  // Build page URLs
+  return data.chapter.data.map(filename =>
+    `${data.baseUrl}/data/${data.chapter.hash}/${filename}`
+  );
+}
+
 async function showManga(query="") {
   showSection("manga");
   const mangaSection = document.getElementById("manga-section");
@@ -234,7 +268,7 @@ async function showManga(query="") {
 
       const card = document.createElement("div");
       card.className = "manga-card";
-      card.onclick = () => window.open(`https://mangadex.org/title/${mangaId}`, "_blank");
+      card.onclick = () => showReader(manga);
 
       const h3 = document.createElement("h3");
       h3.textContent = title.length > 40 ? title.slice(0, 37) + "..." : title;
@@ -247,6 +281,94 @@ async function showManga(query="") {
     resultMsg.textContent = "Failed to load MangaDex data :(";
   }
 }
+
+// --- Manga Reader ---
+let readerState = {
+  manga: null,
+  chapters: [],
+  chapterIdx: 0,
+  pages: [],
+};
+
+async function showReader(manga, chapterIdx = 0) {
+  readerState = {
+    manga,
+    chapters: [],
+    chapterIdx,
+    pages: [],
+  };
+  document.getElementById("manga-section").style.display = "none";
+  document.getElementById("manga-reader").style.display = "flex";
+  document.getElementById("player-container").style.display = "none";
+  document.getElementById("home").style.display = "none";
+  document.getElementById("welcome-message").style.display = "none";
+  document.getElementById("search").style.display = "none";
+  document.getElementById("suggestions").style.display = "none";
+
+  // Show loading
+  document.getElementById("reader-title").textContent = (manga.attributes.title.en || Object.values(manga.attributes.title)[0] || "Untitled");
+  document.getElementById("reader-pages").innerHTML = `<div style="color:#b98aff;font-size:1.3em;">Loading chapters...</div>`;
+  document.getElementById("reader-chapter-num").textContent = "";
+
+  // Fetch chapters (if not already)
+  if (!readerState.chapters.length) {
+    readerState.chapters = await fetchChapters(manga.id);
+  }
+  if (!readerState.chapters.length) {
+    document.getElementById("reader-pages").innerHTML = `<div style="color:#b98aff;font-size:1.1em;">No English chapters found.</div>`;
+    return;
+  }
+  // Clamp chapterIdx
+  if (chapterIdx < 0) chapterIdx = 0;
+  if (chapterIdx >= readerState.chapters.length) chapterIdx = readerState.chapters.length - 1;
+  readerState.chapterIdx = chapterIdx;
+
+  const chapter = readerState.chapters[chapterIdx];
+  document.getElementById("reader-chapter-num").textContent = "Chapter " + (chapter.attributes.chapter || (chapterIdx+1));
+
+  // Fetch and show pages
+  document.getElementById("reader-pages").innerHTML = `<div style="color:#b98aff;font-size:1.2em;">Loading pages...</div>`;
+  let pages = [];
+  try {
+    pages = await fetchChapterPages(chapter.id);
+    readerState.pages = pages;
+  } catch (e) {
+    document.getElementById("reader-pages").innerHTML = `<div style="color:#b98aff;">Failed to load pages.</div>`;
+    return;
+  }
+  // Render pages
+  const pagesDiv = document.getElementById("reader-pages");
+  pagesDiv.innerHTML = "";
+  pages.forEach(url => {
+    const img = document.createElement("img");
+    img.src = url;
+    img.className = "reader-page-img";
+    img.loading = "lazy";
+    img.alt = "Manga page";
+    pagesDiv.appendChild(img);
+  });
+}
+
+// --- Manga Reader Controls ---
+document.getElementById("reader-back-btn").onclick = () => {
+  document.getElementById("manga-reader").style.display = "none";
+  document.getElementById("manga-section").style.display = "flex";
+};
+// Next/Prev chapter
+document.getElementById("reader-prev-chapter").onclick = async () => {
+  if (!readerState.chapters.length) return;
+  if (readerState.chapterIdx > 0) {
+    await showReader(readerState.manga, readerState.chapterIdx - 1);
+    window.scrollTo(0, 0);
+  }
+};
+document.getElementById("reader-next-chapter").onclick = async () => {
+  if (!readerState.chapters.length) return;
+  if (readerState.chapterIdx < readerState.chapters.length - 1) {
+    await showReader(readerState.manga, readerState.chapterIdx + 1);
+    window.scrollTo(0, 0);
+  }
+};
 
 // --- Nav ---
 document.getElementById("nav-home").onclick = showWelcome;
