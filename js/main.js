@@ -64,11 +64,6 @@ animateBubbles();
 
 // --- Core Anime site logic ---
 
-// --- Bubble background animation ---
-// ... (unchanged, keep your existing bubble code) ...
-
-// --- Core Anime site logic ---
-
 const shows = [
   {
     name: "KissXSis",
@@ -178,8 +173,7 @@ function loadPlayer(show, seasonIdx = 0) {
   episodeList.firstChild && episodeList.firstChild.click();
 }
 
-// --- Manga Search ---
-
+// --- MangaDex Search & Grid with Reliable Covers ---
 function renderMangaSearchBar(onSearch) {
   let searchBar = document.getElementById("manga-search-bar");
   if (!searchBar) {
@@ -187,18 +181,13 @@ function renderMangaSearchBar(onSearch) {
     searchBar.id = "manga-search-bar";
     searchBar.type = "text";
     searchBar.placeholder = "Search manga on MangaDex...";
-    searchBar.style = `
-      display:block; margin:0 auto 32px auto; padding:15px 24px; width:65vw; max-width:450px;
-      border-radius:20px; border:3px solid #23232d; background:#23232d; color:#fff; font-size:1.1rem;
-      font-family:'Segoe UI','Montserrat',Arial,sans-serif; font-weight:600; box-shadow:0 2px 16px #a020f030;
-      outline:none; text-align:center;
-    `;
-    searchBar.onkeydown = function(e) {
+    searchBar.autocomplete = "off";
+    searchBar.addEventListener("keydown", (e) => {
       if (e.key === "Enter") onSearch(searchBar.value);
-    }
-    searchBar.oninput = function(e) {
-      if (searchBar.value.trim() === "") onSearch("");
-    }
+    });
+    searchBar.addEventListener("input", (e) => {
+      if (!searchBar.value.trim()) onSearch("");
+    });
     document.getElementById("manga-section").prepend(searchBar);
   }
   return searchBar;
@@ -212,9 +201,7 @@ async function fetchManga(query) {
     "availableTranslatedLanguage[]=en",
     "order[followedCount]=desc"
   ];
-  if (query) {
-    params.push("title=" + encodeURIComponent(query.trim()));
-  }
+  if (query) params.push("title=" + encodeURIComponent(query.trim()));
   const apiUrl = `${base}?${params.join("&")}`;
   const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(apiUrl);
   const resp = await fetch(proxyUrl);
@@ -251,11 +238,7 @@ async function showManga(query="") {
     resultMsg.remove();
 
     const grid = document.createElement("div");
-    grid.style.display = "flex";
-    grid.style.flexWrap = "wrap";
-    grid.style.justifyContent = "center";
-    grid.style.gap = "28px";
-    grid.style.margin = "30px auto";
+    grid.className = "manga-grid";
     data.data.forEach(manga => {
       const mangaId = manga.id;
       const coverFileName = getCoverFileName(manga);
@@ -265,37 +248,16 @@ async function showManga(query="") {
       const title = manga.attributes.title.en || Object.values(manga.attributes.title)[0] || "Untitled";
 
       const card = document.createElement("div");
-      card.style.background = "linear-gradient(120deg,#220046 20%,#a020f099 100%)";
-      card.style.borderRadius = "22px";
-      card.style.boxShadow = "0 0 50px #a020f077,0 2px 16px #2a0050cc";
-      card.style.padding = "12px 12px 10px 12px";
-      card.style.width = "170px";
-      card.style.cursor = "pointer";
-      card.style.display = "flex";
-      card.style.flexDirection = "column";
-      card.style.alignItems = "center";
-      card.style.transition = "transform 0.22s cubic-bezier(.5,2,.5,1), box-shadow 0.2s";
-      card.style.border = "2px solid #ad47f250";
-      card.onmouseover = () => card.style.transform = "scale(1.045) translateY(-6px)";
-      card.onmouseleave = () => card.style.transform = "";
+      card.className = "manga-card";
       card.onclick = () => window.open(`https://mangadex.org/title/${mangaId}`, "_blank");
 
       const img = document.createElement("img");
       img.src = coverUrl;
       img.alt = title;
       img.onerror = function() { this.src = "https://mangadex.org/img/avatar.png"; };
-      img.style.width = "100%";
-      img.style.borderRadius = "13px";
-      img.style.marginBottom = "14px";
-      img.style.boxShadow = "0 0 20px #ad47f244,0 2px 8px #2a005022";
       card.appendChild(img);
 
       const h3 = document.createElement("h3");
-      h3.style.color = "#e6ccff";
-      h3.style.margin = "0 0 7px 0";
-      h3.style.fontSize = "1em";
-      h3.style.textShadow = "0 0 7px #c18aff99";
-      h3.style.textAlign = "center";
       h3.textContent = title.length > 40 ? title.slice(0, 37) + "..." : title;
       card.appendChild(h3);
 
