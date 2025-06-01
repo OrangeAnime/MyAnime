@@ -131,9 +131,77 @@ function showWelcome() {
   showSection("welcome");
 }
 
-// Manga tab
-function showManga() {
+// Manga tab: fetch and display manga from MangaDex
+async function showManga() {
   showSection("manga");
+  const mangaSection = document.getElementById("manga-section");
+  mangaSection.innerHTML = `<div style="color:#b98aff;font-size:1.4em;">Loading manga from MangaDex...</div>`;
+
+  // Fetch the most followed manga
+  try {
+    const resp = await fetch("https://api.mangadex.org/manga?limit=18&order[followedCount]=desc&includes[]=cover_art&availableTranslatedLanguage[]=en");
+    const data = await resp.json();
+    if (!data.data || !data.data.length) {
+      mangaSection.innerHTML = `<div style="color:#b98aff;font-size:1.4em;">No manga found.</div>`;
+      return;
+    }
+    // Build the manga grid
+    const grid = document.createElement("div");
+    grid.style.display = "flex";
+    grid.style.flexWrap = "wrap";
+    grid.style.justifyContent = "center";
+    grid.style.gap = "28px";
+    grid.style.margin = "30px auto";
+    data.data.forEach(manga => {
+      const coverRel = manga.relationships.find(r => r.type === "cover_art");
+      const coverId = coverRel?.attributes?.fileName;
+      const mangaId = manga.id;
+      const coverUrl = coverId
+        ? `https://uploads.mangadex.org/covers/${mangaId}/${coverId}.256.jpg`
+        : "https://mangadex.org/img/avatar.png";
+      const title = manga.attributes.title.en || Object.values(manga.attributes.title)[0] || "Untitled";
+
+      const card = document.createElement("div");
+      card.style.background = "linear-gradient(120deg,#220046 20%,#a020f099 100%)";
+      card.style.borderRadius = "22px";
+      card.style.boxShadow = "0 0 50px #a020f077,0 2px 16px #2a0050cc";
+      card.style.padding = "12px 12px 10px 12px";
+      card.style.width = "170px";
+      card.style.cursor = "pointer";
+      card.style.display = "flex";
+      card.style.flexDirection = "column";
+      card.style.alignItems = "center";
+      card.style.transition = "transform 0.22s cubic-bezier(.5,2,.5,1), box-shadow 0.2s";
+      card.style.border = "2px solid #ad47f250";
+      card.onmouseover = () => card.style.transform = "scale(1.045) translateY(-6px)";
+      card.onmouseleave = () => card.style.transform = "";
+      card.onclick = () => window.open(`https://mangadex.org/title/${mangaId}`, "_blank");
+
+      const img = document.createElement("img");
+      img.src = coverUrl;
+      img.alt = title;
+      img.style.width = "100%";
+      img.style.borderRadius = "13px";
+      img.style.marginBottom = "14px";
+      img.style.boxShadow = "0 0 20px #ad47f244,0 2px 8px #2a005022";
+      card.appendChild(img);
+
+      const h3 = document.createElement("h3");
+      h3.style.color = "#e6ccff";
+      h3.style.margin = "0 0 7px 0";
+      h3.style.fontSize = "1em";
+      h3.style.textShadow = "0 0 7px #c18aff99";
+      h3.style.textAlign = "center";
+      h3.textContent = title.length > 40 ? title.slice(0, 37) + "..." : title;
+      card.appendChild(h3);
+
+      grid.appendChild(card);
+    });
+    mangaSection.innerHTML = "";
+    mangaSection.appendChild(grid);
+  } catch (e) {
+    mangaSection.innerHTML = `<div style="color:#b98aff;font-size:1.4em;">Failed to load MangaDex data :(</div>`;
+  }
 }
 
 // Player with seasons
