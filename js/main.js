@@ -173,8 +173,7 @@ function loadPlayer(show, seasonIdx = 0) {
   episodeList.firstChild && episodeList.firstChild.click();
 }
 
-// --- MangaDex Search & Grid with Reliable Covers (with fallback API call) ---
-
+// --- Manga Title Only (no covers) ---
 function renderMangaSearchBar(onSearch) {
   let searchBar = document.getElementById("manga-search-bar");
   if (!searchBar) {
@@ -198,7 +197,6 @@ async function fetchManga(query) {
   const base = "https://api.mangadex.org/manga";
   const params = [
     "limit=18",
-    "includes[]=cover_art",
     "availableTranslatedLanguage[]=en",
     "order[followedCount]=desc"
   ];
@@ -208,24 +206,6 @@ async function fetchManga(query) {
   const resp = await fetch(proxyUrl);
   if (!resp.ok) throw new Error("Fetch failed");
   return await resp.json();
-}
-
-async function getMangaCoverUrl(manga) {
-  // Try to get from relationships first
-  const rel = (manga.relationships||[]).find(r => r.type === "cover_art" && r.attributes && r.attributes.fileName);
-  if (rel) {
-    return `https://uploads.mangadex.org/covers/${manga.id}/${rel.attributes.fileName}.256.jpg`;
-  }
-  // Fallback: fetch from /cover API
-  try {
-    const resp = await fetch("https://corsproxy.io/?" + encodeURIComponent(`https://api.mangadex.org/cover?manga[]=${manga.id}`));
-    if (!resp.ok) return "https://mangadex.org/img/avatar.png";
-    const data = await resp.json();
-    if (data.data && data.data.length && data.data[0].attributes && data.data[0].attributes.fileName) {
-      return `https://uploads.mangadex.org/covers/${manga.id}/${data.data[0].attributes.fileName}.256.jpg`;
-    }
-  } catch (e) {}
-  return "https://mangadex.org/img/avatar.png";
 }
 
 async function showManga(query="") {
@@ -248,28 +228,20 @@ async function showManga(query="") {
 
     const grid = document.createElement("div");
     grid.className = "manga-grid";
-    // Async load covers
-    await Promise.all(data.data.map(async manga => {
+    data.data.forEach(manga => {
       const mangaId = manga.id;
-      const coverUrl = await getMangaCoverUrl(manga);
       const title = manga.attributes.title.en || Object.values(manga.attributes.title)[0] || "Untitled";
 
       const card = document.createElement("div");
       card.className = "manga-card";
       card.onclick = () => window.open(`https://mangadex.org/title/${mangaId}`, "_blank");
 
-      const img = document.createElement("img");
-      img.src = coverUrl;
-      img.alt = title;
-      img.onerror = function() { this.src = "https://mangadex.org/img/avatar.png"; };
-      card.appendChild(img);
-
       const h3 = document.createElement("h3");
       h3.textContent = title.length > 40 ? title.slice(0, 37) + "..." : title;
       card.appendChild(h3);
 
       grid.appendChild(card);
-    }));
+    });
     mangaSection.appendChild(grid);
   } catch (e) {
     resultMsg.textContent = "Failed to load MangaDex data :(";
